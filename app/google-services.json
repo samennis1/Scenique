@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "266096908530",
+    "firebase_url": "https://sample-app-61683-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "sample-app-61683",
+    "storage_bucket": "sample-app-61683.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:266096908530:android:46f7e6b89d35911565586b",
+        "android_client_info": {
+          "package_name": "com.sam.scenique_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "266096908530-bctrb4f5dm7p0tkur9192htftahifc1p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sam.scenique_app",
+            "certificate_hash": "78bb16d0897449838c07aaeb727d4ad8304983f4"
+          }
+        },
+        {
+          "client_id": "266096908530-273ftu153o2i1b4hrmcdd9djb6ik29k6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQyNbtlp904Z4Nl2xBmrm8sEvzUs-n8Io"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "266096908530-273ftu153o2i1b4hrmcdd9djb6ik29k6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
