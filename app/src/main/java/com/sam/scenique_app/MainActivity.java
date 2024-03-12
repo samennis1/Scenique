@@ -1,5 +1,6 @@
 package com.sam.scenique_app;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,7 +9,13 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.auth.api.identity.BeginSignInRequest;
+import com.google.android.gms.auth.api.identity.SignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.sam.scenique_app.databinding.ActivityMainBinding;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -18,20 +25,16 @@ import androidx.navigation.ui.NavigationUI;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-    private ActivityResultLauncher<Intent> signInResultLauncher;
+
+    private FirebaseAuth mAuth;
+
+
+    private GoogleSignInClient mGoogleSignInClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Initialize the ActivityResultLauncher
-//        signInResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-//            if (result.getResultCode() == RESULT_OK) {
-//                Intent data = result.getData();
-//                // Handle the sign-in result
-//                // You might want to navigate to a different fragment or activity upon successful sign-in
-//            }
-//        });
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -42,11 +45,19 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
+        mAuth = FirebaseAuth.getInstance();
+
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(String.valueOf(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
     public void onBtnClick(View view) {
-        SignIn signin = new SignIn(this);
-        signin.startSignIn(signInResultLauncher);
-        System.out.println("hi");
+        Intent intent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(intent, 202);
     }
 }
