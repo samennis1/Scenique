@@ -2,6 +2,7 @@ package com.sam.scenique_app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -31,10 +32,6 @@ public class MainActivity extends AppCompatActivity {
 //                // You might want to navigate to a different fragment or activity upon successful sign-in
 //            }
 //        });
-
-        SignIn signin = new SignIn(this);
-        signin.startSignIn(signInResultLauncher);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -45,5 +42,11 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+    }
+
+    public void onBtnClick(View view) {
+        SignIn signin = new SignIn(this);
+        signin.startSignIn(signInResultLauncher);
+        System.out.println("hi");
     }
 }
