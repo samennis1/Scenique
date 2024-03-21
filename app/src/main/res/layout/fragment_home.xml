@@ -25,7 +25,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onBtnClick"
-        android:text="Button"
+        android:text="Login"
         tools:layout_editor_absoluteX="159dp"
         tools:layout_editor_absoluteY="483dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
