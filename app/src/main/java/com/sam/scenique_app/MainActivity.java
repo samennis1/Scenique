@@ -1,11 +1,13 @@
 package com.sam.scenique_app;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -47,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
     private BeginSignInRequest signInRequest;
 
+    private TextView userEmailLabel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,8 +66,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        mAuth = FirebaseAuth.getInstance();
-
         signInRequest = BeginSignInRequest.builder()
                 .setPasswordRequestOptions(BeginSignInRequest.PasswordRequestOptions.builder()
                         .setSupported(true)
@@ -76,6 +78,19 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         oneTapClient = Identity.getSignInClient(this);
+    }
+
+    @SuppressLint("SetTextI18n")
+    protected void onResume() {
+        super.onResume();
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        userEmailLabel = findViewById(R.id.text_home);
+
+        if (user != null) {
+            userEmailLabel.setText("Welcome " + user.getDisplayName());
+        }
     }
 
     public void onBtnClick(View view) {
@@ -119,11 +134,11 @@ public class MainActivity extends AppCompatActivity {
 //                                            Log.d(TAG, "signInWithCredential:success");
                                             FirebaseUser user = mAuth.getCurrentUser();
 //                                            updateUI(user);
+                                            if(user != null) {
+                                                userEmailLabel.setText("Welcome " + user.getEmail());
+                                            }
                                         } else {
-                                            // If sign in fails, display a message to the user.
                                             System.out.println("Fail");
-//                                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-//                                            updateUI(null);
                                         }
                                     }
                                 });
