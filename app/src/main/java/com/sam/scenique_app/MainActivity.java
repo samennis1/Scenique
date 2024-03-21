@@ -23,6 +23,7 @@ import com.google.android.gms.auth.api.identity.SignInCredential;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -34,11 +35,18 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.sam.scenique_app.databinding.ActivityMainBinding;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private BeginSignInRequest signInRequest;
 
     private TextView userEmailLabel;
+
+    private FirebaseStorage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +88,22 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         oneTapClient = Identity.getSignInClient(this);
+        storage = FirebaseStorage.getInstance("gs://sample-app-61683.appspot.com");
+
+        upload();
+    }
+
+    private void upload() {
+        StorageReference ref = storage.getReference();
+        StorageReference mountainsRef = ref.child("mountains.jpg");
+
+        int imageResource = getResources().getIdentifier("image", "drawable", getPackageName()); // Assuming your image is named image.JPG in drawable folder
+        try {
+            InputStream stream = getResources().openRawResource(imageResource);
+            mountainsRef.putStream(stream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @SuppressLint("SetTextI18n")
