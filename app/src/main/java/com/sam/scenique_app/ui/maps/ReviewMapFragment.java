@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,6 +20,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.sam.scenique_app.LocationReview;
 import com.sam.scenique_app.R;
 import com.sam.scenique_app.databinding.FragmentReviewMapBinding;
@@ -37,7 +40,7 @@ public class ReviewMapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         binding = FragmentReviewMapBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -55,28 +58,43 @@ public class ReviewMapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        LatLng sydney = new LatLng(-34, 151);
-        List<LocationReview> locationReviews = new ArrayList<>();
-        locationReviews.add(new LocationReview(-34.0, 151.0, 4.5f, "A breathtaking view of the ocean."));
-        locationReviews.add(new LocationReview(-33.872, 151.205, 4.0f, "Lovely place for a morning run."));
-        for (LocationReview review : locationReviews) {
-            LatLng position = new LatLng(review.latitude, review.longitude);
-            Marker marker = mMap.addMarker(new MarkerOptions().position(position));
-            marker.setTag(review); // Store the review object for later retrieval
-        }
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                LocationReview review = (LocationReview) marker.getTag();
-                if (review != null) {
-                    showReviewOverlay(review.rating, review.reviewText);
-                }
-                return true;
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("reviews")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            double latitude = document.getDouble("latitude");
+                            double longitude = document.getDouble("longitude");
+                            float rating = document.getDouble("rating").floatValue();
+                            String reviewText = document.getString("review");
+                            String photoUrl = document.getString("photoUrl");
+
+                            LocationReview review = new LocationReview(latitude, longitude, rating, reviewText, photoUrl);
+                            LatLng position = new LatLng(review.getLatitude(), review.getLongitude());
+                            Marker marker = mMap.addMarker(new MarkerOptions().position(position));
+                            marker.setTag(review);
+                        }
+
+                        if (!task.getResult().isEmpty()) {
+                            QueryDocumentSnapshot firstDocument = (QueryDocumentSnapshot) task.getResult().getDocuments().get(0);
+                            double latitude = firstDocument.getDouble("latitude");
+                            double longitude = firstDocument.getDouble("longitude");
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 10));
+                        }
+                    } else {
+                        Log.d("ReviewMapFragment", "Error getting documents: ", task.getException());
+                    }
+                });
+
+        mMap.setOnMarkerClickListener(marker -> {
+            LocationReview review = (LocationReview) marker.getTag();
+            if (review != null) {
+                showReviewOverlay(review.getRating(), review.getReviewText());
             }
+            return true;
         });
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 
     private void showReviewOverlay(float rating, String reviewText) {
@@ -98,6 +116,5 @@ public class ReviewMapFragment extends Fragment implements OnMapReadyCallback {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-
 
 }

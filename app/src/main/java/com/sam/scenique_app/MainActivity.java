@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         StorageReference ref = storage.getReference();
         StorageReference mountainsRef = ref.child("mountains.jpg");
 
-        int imageResource = getResources().getIdentifier("image", "drawable", getPackageName()); // Assuming your image is named image.JPG in drawable folder
+        int imageResource = getResources().getIdentifier("image", "drawable", getPackageName());
         try {
             InputStream stream = getResources().openRawResource(imageResource);
             mountainsRef.putStream(stream);
@@ -121,16 +121,10 @@ public class MainActivity extends AppCompatActivity {
             userEmailLabel.setText("Welcome " + user.getDisplayName());
             showLoggedTabs(true);
         } else {
-            // Hide the map tab if the user is not logged in
+
             showLoggedTabs(false);
         }
     }
-
-//    private void navigateToMapFragment() {
-//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-//        navController.navigate(R.id.navigation_map);
-//        binding.navView.setSelectedItemId(R.id.navigation_map);
-//    }
 
     public void showLoggedTabs(boolean show) {
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -181,11 +175,11 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
-                                            // Sign in success, update UI with the signed-in user's information
+
                                             System.out.println("Success");
-//                                            Log.d(TAG, "signInWithCredential:success");
+
                                             FirebaseUser user = mAuth.getCurrentUser();
-//                                            updateUI(user);
+
                                             if(user != null) {
                                                 userEmailLabel.setText("Welcome " + user.getEmail());
                                                 showLoggedTabs(true);
@@ -197,8 +191,7 @@ public class MainActivity extends AppCompatActivity {
                                 });
 
                         System.out.println("Logged in " + credential.getGoogleIdToken());
-//                        Intent i = new Intent(MainActivity.this, Review.class);
-//                        startActivity(i);
+
                     }
                 } catch (ApiException e) {
                     System.out.println("ERROR");

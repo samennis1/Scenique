@@ -60,7 +60,6 @@ public class CameraFragment extends Fragment {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
-
     private static final String[] PERMISSIONS_REQUIRED = new String[]{
             Manifest.permission.CAMERA,
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -68,7 +67,7 @@ public class CameraFragment extends Fragment {
     };
 
     public CameraFragment() {
-        // Required empty public constructor
+
     }
 
     public static CameraFragment newInstance() {
@@ -77,10 +76,9 @@ public class CameraFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View view = inflater.inflate(R.layout.fragment_camera, container, false);
 
-        // This could be a button click listener where you check for permissions before opening the camera
         view.findViewById(R.id.open_camera_button).setOnClickListener(v -> handleCameraButtonClick());
         view.findViewById(R.id.submit_review_button).setOnClickListener(v -> submitButtonClick());
 
@@ -89,10 +87,10 @@ public class CameraFragment extends Fragment {
 
     private void handleCameraButtonClick() {
         if (hasPermissions()) {
-            // Permissions are granted, open the camera here
+
             openCamera();
         } else {
-            // Permissions not granted, request them.
+
             requestPermissions(PERMISSIONS_REQUIRED, PERMISSIONS_REQUEST_CODE);
         }
     }
@@ -108,18 +106,18 @@ public class CameraFragment extends Fragment {
 
     private void openCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure there's a camera activity to handle the intent
+
         System.out.println("Resolved activity: " + takePictureIntent.resolveActivity(getActivity().getPackageManager()));
         System.out.println("Works 0");
-        // Create the File where the photo should go
+
         File photoFile = null;
         try {
             photoFile = createImageFile();
         } catch (IOException ex) {
-            // Error occurred while creating the File
+
             Toast.makeText(getContext(), "Error creating image file.", Toast.LENGTH_SHORT).show();
         }
-        // Continue only if the File was successfully created
+
         if (photoFile != null) {
             System.out.println("Works 2");
             photoUri = FileProvider.getUriForFile(getContext(),
@@ -131,14 +129,14 @@ public class CameraFragment extends Fragment {
     }
 
     private File createImageFile() throws IOException {
-        // Create an image file name
+
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",   /* suffix */
-                storageDir      /* directory */
+                imageFileName,
+                ".jpg",
+                storageDir
         );
         return image;
     }
@@ -148,10 +146,10 @@ public class CameraFragment extends Fragment {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSIONS_REQUEST_CODE) {
             if (grantResults.length > 0 && Arrays.equals(grantResults, new int[]{PackageManager.PERMISSION_GRANTED, PackageManager.PERMISSION_GRANTED, PackageManager.PERMISSION_GRANTED})) {
-                // All permissions have been granted
-                openCamera(); // Proceed with opening the camera
+
+                openCamera();
             } else {
-                // Permissions were denied. Handle the failure to obtain permission.
+
                 Toast.makeText(getContext(), "Permission denied", Toast.LENGTH_SHORT).show();
             }
         }
@@ -162,16 +160,13 @@ public class CameraFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             System.out.println("Photo Taken!");
-            // The image captured is saved in the file created (access using 'photoUri')
-            // You can now upload the image to Firebase Storage and proceed with other tasks
 
-            // Check if the photoUri is not null
             if (photoUri != null) {
-                // Get the InputStream of the photo file
+
                 try {
                     InputStream stream = getActivity().getContentResolver().openInputStream(photoUri);
                     if (stream != null) {
-                        // Upload the photo to Firebase Storage
+
                         uploadPhotoToFirebase(stream);
                     } else {
                         Toast.makeText(getContext(), "Failed to open photo file.", Toast.LENGTH_SHORT).show();
@@ -187,7 +182,7 @@ public class CameraFragment extends Fragment {
     }
 
     private void uploadPhotoToFirebase(InputStream inputStream) {
-        // The filename should be unique for each upload to avoid overwriting files
+
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
 
@@ -195,7 +190,7 @@ public class CameraFragment extends Fragment {
 
         storageRef.putStream(inputStream)
                 .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                    // This is the URL of the uploaded photo
+
                     photoURL = uri.toString();
                 }))
                 .addOnFailureListener(e -> {
@@ -216,22 +211,19 @@ public class CameraFragment extends Fragment {
         float rating = ratingBar.getRating();
         String review = reviewText.getText().toString();
 
-        // Create a new review object
         Map<String, Object> reviewMap = new HashMap<>();
         reviewMap.put("rating", rating);
         reviewMap.put("review", review);
-        reviewMap.put("photoUrl", photoUrl); // Now using the actual URL
+        reviewMap.put("photoUrl", photoUrl);
         reviewMap.put("latitude", latitude);
         reviewMap.put("longitude", longitude);
 
-        // Save review object to Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("reviews")
                 .add(reviewMap)
                 .addOnSuccessListener(documentReference -> Toast.makeText(getContext(), "Review submitted successfully.", Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> Toast.makeText(getContext(), "Error submitting review.", Toast.LENGTH_SHORT).show());
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -243,7 +235,6 @@ public class CameraFragment extends Fragment {
         void onLocationResult(double latitude, double longitude);
     }
 
-
     private void getLastLocation(LocationCallback callback) {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             System.out.println("Invalid perms");
@@ -251,7 +242,7 @@ public class CameraFragment extends Fragment {
         }
         fusedLocationClient.getLastLocation()
                 .addOnSuccessListener(getActivity(), location -> {
-                    // Got last known location. In some rare situations, this can be null.
+
                     if (location != null) {
                         double latitude = location.getLatitude();
                         double longitude = location.getLongitude();
@@ -259,7 +250,7 @@ public class CameraFragment extends Fragment {
                         callback.onLocationResult(latitude, longitude);
                     } else {
                         System.out.println("Location is null");
-                        // Consider calling a method to handle the null case, possibly retrying or providing a default value
+
                     }
                 });
     }
