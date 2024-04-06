@@ -18,10 +18,13 @@ import android.widget.RatingBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -52,6 +55,9 @@ public class CameraFragment extends Fragment {
 
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     private Uri photoUri;
+    private FusedLocationProviderClient fusedLocationClient;
+    private String photoURL;
+
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
 
@@ -76,8 +82,7 @@ public class CameraFragment extends Fragment {
 
         // This could be a button click listener where you check for permissions before opening the camera
         view.findViewById(R.id.open_camera_button).setOnClickListener(v -> handleCameraButtonClick());
-        view.findViewById(R.id.submit_review_button).setOnClickListener(v -> submitReview());
-
+        view.findViewById(R.id.submit_review_button).setOnClickListener(v -> submitButtonClick());
 
         return view;
     }
@@ -182,89 +187,42 @@ public class CameraFragment extends Fragment {
     }
 
     private void uploadPhotoToFirebase(InputStream inputStream) {
-        // Create a reference to the Firebase Storage path where you want to upload the photo
-        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("photos").child("filename.jpg");
-        uploadToFireStore();
-        // Upload the photo to Firebase Storage
-        storageRef.putStream(inputStream)
-                .addOnSuccessListener(taskSnapshot -> {
-                    // Photo uploaded successfully
-                    Toast.makeText(getContext(), "Photo uploaded successfully.", Toast.LENGTH_SHORT).show();
+        // The filename should be unique for each upload to avoid overwriting files
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
 
-                    // Proceed with other tasks or update UI as needed
-                })
+        StorageReference storageRef = FirebaseStorage.getInstance().getReference().child("photos/" + imageFileName);
+
+        storageRef.putStream(inputStream)
+                .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                    // This is the URL of the uploaded photo
+                    photoURL = uri.toString();
+                }))
                 .addOnFailureListener(e -> {
-                    // Error occurred while uploading photo
                     Toast.makeText(getContext(), "Failed to upload photo.", Toast.LENGTH_SHORT).show();
                     e.printStackTrace();
                 });
     }
 
-    private void uploadToFireStore() {
-        // Create a reference to the Firebase Storage path where you want to upload the photo
-        FirebaseFirestore firebase = FirebaseFirestore.getInstance();
+    private void submitButtonClick() {
+        if(photoURL == null) return;
 
-        Map<String, Object> user = new HashMap<>();
-        user.put("first", "Ada");
-        user.put("last", "Lovelace");
-        user.put("born", 1815);
-
-        System.out.println("Uploading.,..");
-
-        firebase.collection("users")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d("TAG", document.getId() + " => " + document.getData());
-                            }
-                        } else {
-                            Log.w("TAG", "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-
-
-        firebase.collection("users")
-                .add(user)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        Log.d("TAG", "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("TAG", "Error adding document", e);
-                    }
-                });
-
-
+        getLastLocation((latitude, longitude) -> submitReview(latitude, longitude, photoURL));
     }
 
-    private void submitReview() {
+    private void submitReview(double latitude, double longitude, String photoUrl) {
         RatingBar ratingBar = getView().findViewById(R.id.photo_rating_bar);
         EditText reviewText = getView().findViewById(R.id.photo_review_text);
         float rating = ratingBar.getRating();
         String review = reviewText.getText().toString();
 
-        // Check if a photo was taken
-        if (photoUri == null) {
-            Toast.makeText(getContext(), "Please take a photo first.", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Assuming the photo has been uploaded and you have the URL
-        String photoUrl = "URL of the uploaded photo"; // Replace this with the actual URL after upload
-
         // Create a new review object
         Map<String, Object> reviewMap = new HashMap<>();
         reviewMap.put("rating", rating);
         reviewMap.put("review", review);
-        reviewMap.put("photoUrl", photoUrl);
+        reviewMap.put("photoUrl", photoUrl); // Now using the actual URL
+        reviewMap.put("latitude", latitude);
+        reviewMap.put("longitude", longitude);
 
         // Save review object to Firestore
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -274,5 +232,36 @@ public class CameraFragment extends Fragment {
                 .addOnFailureListener(e -> Toast.makeText(getContext(), "Error submitting review.", Toast.LENGTH_SHORT).show());
     }
 
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+    }
+
+    public interface LocationCallback {
+        void onLocationResult(double latitude, double longitude);
+    }
+
+
+    private void getLastLocation(LocationCallback callback) {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            System.out.println("Invalid perms");
+            return;
+        }
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(getActivity(), location -> {
+                    // Got last known location. In some rare situations, this can be null.
+                    if (location != null) {
+                        double latitude = location.getLatitude();
+                        double longitude = location.getLongitude();
+                        System.out.println("Lat: " + latitude + ", Lon: " + longitude);
+                        callback.onLocationResult(latitude, longitude);
+                    } else {
+                        System.out.println("Location is null");
+                        // Consider calling a method to handle the null case, possibly retrying or providing a default value
+                    }
+                });
+    }
 
 }
