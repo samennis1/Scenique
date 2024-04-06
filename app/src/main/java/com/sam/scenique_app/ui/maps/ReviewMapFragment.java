@@ -16,6 +16,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -53,12 +54,13 @@ public class ReviewMapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("reviews")
                 .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             double latitude = document.getDouble("latitude");
                             double longitude = document.getDouble("longitude");
@@ -68,16 +70,16 @@ public class ReviewMapFragment extends Fragment implements OnMapReadyCallback {
 
                             LocationReview review = new LocationReview(latitude, longitude, rating, reviewText, photoUrl);
                             LatLng position = new LatLng(review.getLatitude(), review.getLongitude());
+                            builder.include(position); // Include this position in the bounds
                             Marker marker = mMap.addMarker(new MarkerOptions().position(position));
-                            marker.setTag(review);
+                            marker.setTag(review); // Store the review object for later retrieval
                         }
 
-                        if (!task.getResult().isEmpty()) {
-                            QueryDocumentSnapshot firstDocument = (QueryDocumentSnapshot) task.getResult().getDocuments().get(0);
-                            double latitude = firstDocument.getDouble("latitude");
-                            double longitude = firstDocument.getDouble("longitude");
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 10));
-                        }
+                        // After adding all markers, adjust the camera to show them all
+                        LatLngBounds bounds = builder.build();
+                        // Consider an appropriate padding value in pixels (e.g., 100), depending on the screen size or markers' proximity
+                        int padding = 100;
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
                     } else {
                         Log.d("ReviewMapFragment", "Error getting documents: ", task.getException());
                     }
@@ -91,6 +93,7 @@ public class ReviewMapFragment extends Fragment implements OnMapReadyCallback {
             return true;
         });
     }
+
 
     private void showReviewOverlay(float rating, String reviewText) {
         Context context = getContext();

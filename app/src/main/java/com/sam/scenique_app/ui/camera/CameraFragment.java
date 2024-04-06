@@ -5,9 +5,11 @@ import static android.app.Activity.RESULT_OK;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +25,8 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -191,7 +195,7 @@ public class CameraFragment extends Fragment {
     private void submitButtonClick() {
         if (photoURL == null) return;
 
-        getLastLocation((latitude, longitude) -> submitReview(latitude, longitude, photoURL));
+        requestSingleLocationUpdate((latitude, longitude) -> submitReview(latitude, longitude, photoURL));
     }
 
     private void submitReview(double latitude, double longitude, String photoUrl) {
@@ -224,24 +228,34 @@ public class CameraFragment extends Fragment {
         void onLocationResult(double latitude, double longitude);
     }
 
-    private void getLastLocation(LocationCallback callback) {
+    private void requestSingleLocationUpdate(final LocationCallback callback) {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            System.out.println("Invalid perms");
+            System.out.println("Invalid permissions.");
+
             return;
         }
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(getActivity(), location -> {
 
-                    if (location != null) {
-                        double latitude = location.getLatitude();
-                        double longitude = location.getLongitude();
-                        System.out.println("Lat: " + latitude + ", Lon: " + longitude);
-                        callback.onLocationResult(latitude, longitude);
-                    } else {
-                        System.out.println("Location is null");
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setNumUpdates(1);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-                    }
-                });
+        fusedLocationClient.requestLocationUpdates(locationRequest, new com.google.android.gms.location.LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult != null && locationResult.getLastLocation() != null) {
+                    Location location = locationResult.getLastLocation();
+                    double latitude = location.getLatitude();
+                    double longitude = location.getLongitude();
+                    System.out.println("Lat: " + latitude + ", Lon: " + longitude);
+                    callback.onLocationResult(latitude, longitude);
+
+                    fusedLocationClient.removeLocationUpdates(this);
+                } else {
+                    System.out.println("Location is null");
+
+                }
+            }
+        }, Looper.getMainLooper());
     }
 
 }
