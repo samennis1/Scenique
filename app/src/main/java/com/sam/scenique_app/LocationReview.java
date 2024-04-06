@@ -15,9 +15,23 @@ public class LocationReview {
         this.photoUrl = photoUrl;
     }
 
-    public double getLatitude() { return latitude; }
-    public double getLongitude() { return longitude; }
-    public String getPhotoUrl() { return photoUrl; }
-    public float getRating() { return rating; }
-    public String getReviewText() { return reviewText; }
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public float getRating() {
+        return rating;
+    }
+
+    public String getReviewText() {
+        return reviewText;
+    }
 }

@@ -8,8 +8,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.identity.BeginSignInResult;
 import com.google.android.gms.auth.api.identity.Identity;
@@ -30,10 +32,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.sam.scenique_app.databinding.ActivityMainBinding;
+
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
 import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
@@ -102,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
         userEmailLabel = findViewById(R.id.text_home);
 
-        if(userEmailLabel != null && user != null) {
+        if (userEmailLabel != null && user != null) {
             userEmailLabel.setText("Welcome " + user.getDisplayName());
         }
 
@@ -155,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(data);
                     String idToken = credential.getGoogleIdToken();
-                    if (idToken !=  null) {
+                    if (idToken != null) {
                         AuthCredential firebaseCredential = GoogleAuthProvider.getCredential(idToken, null);
                         mAuth.signInWithCredential(firebaseCredential)
                                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -167,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
 
                                             FirebaseUser user = mAuth.getCurrentUser();
 
-                                            if(user != null) {
+                                            if (user != null) {
                                                 userEmailLabel.setText("Welcome " + user.getEmail());
                                                 showLoggedTabs(true);
                                             }

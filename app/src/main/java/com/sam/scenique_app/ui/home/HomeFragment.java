@@ -33,7 +33,6 @@ public class HomeFragment extends Fragment {
         final TextView textView = binding.textHome;
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
-        // Assuming the logout button ID is logoutBtn in your fragment_home.xml
         binding.logoutBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -48,7 +47,6 @@ public class HomeFragment extends Fragment {
         BottomNavigationView navView = getActivity().findViewById(R.id.nav_view);
         Menu menu = navView.getMenu();
 
-        // Assuming the ID for the map tab is navigation_map
         MenuItem mapItem = menu.findItem(R.id.navigation_map);
         MenuItem cameraItem = menu.findItem(R.id.navigation_camera);
         if (mapItem != null && cameraItem != null) {
@@ -57,15 +55,11 @@ public class HomeFragment extends Fragment {
             cameraItem.setVisible(show);
         }
     }
+
     private void logoutUser() {
         FirebaseAuth.getInstance().signOut();
         showLoggedTabs(false);
-        // Navigate back to the login screen or another appropriate screen
-        // Make sure to define the navigation action in your nav_graph.xml if using Navigation Component
-        // This example assumes you have an action defined as action_homeFragment_to_loginFragment
-//        Navigation.findNavController(binding.getRoot()).navigate(R.id.action_homeFragment_to_loginFragment);
 
-        // If you're not using the Navigation Component, use other methods to navigate.
     }
 
     @Override

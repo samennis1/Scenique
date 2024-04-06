@@ -15,17 +15,20 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.sam.scenique_app.R;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -186,7 +189,7 @@ public class CameraFragment extends Fragment {
     }
 
     private void submitButtonClick() {
-        if(photoURL == null) return;
+        if (photoURL == null) return;
 
         getLastLocation((latitude, longitude) -> submitReview(latitude, longitude, photoURL));
     }
