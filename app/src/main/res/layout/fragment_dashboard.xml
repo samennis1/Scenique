@@ -3,53 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".ui.dashboard.DashboardFragment">
 
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="342dp"
-        android:layout_height="159dp"
-        android:text="Add your review here..."
-        tools:layout_editor_absoluteX="50dp"
-        tools:layout_editor_absoluteY="450dp" />
-
-    <RatingBar
-        android:id="@+id/ratingBar"
-        android:layout_width="wrap_content"
+        android:id="@+id/text_dashboard"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="95dp"
-        tools:layout_editor_absoluteY="373dp" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="167dp"
-        android:layout_height="54dp"
-        android:background="#0B8DF4"
-        android:text="Button"
-        tools:layout_editor_absoluteX="132dp"
-        tools:layout_editor_absoluteY="649dp" />
-
-    <androidx.constraintlayout.utils.widget.MockView
-        android:id="@+id/photo"
-        android:layout_width="338dp"
-        android:layout_height="218dp"
-        tools:layout_editor_absoluteX="46dp"
-        tools:layout_editor_absoluteY="129dp" />
-
-    <EditText
-        android:id="@+id/editTextText2"
-        android:layout_width="458dp"
-        android:layout_height="86dp"
-        android:background="#03A9F4"
-        android:backgroundTint="#2196F3"
-        android:ems="10"
-        android:inputType="text"
-        android:text="ADD REVIEW"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="34sp"
-        android:textStyle="bold"
-        tools:layout_editor_absoluteX="-12dp"
-        tools:layout_editor_absoluteY="-7dp" />
-
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
