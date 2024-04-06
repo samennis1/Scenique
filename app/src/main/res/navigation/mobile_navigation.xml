@@ -5,6 +5,9 @@
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_home">
 
+    <action android:id="@+id/action_global_navigation_map"
+        app:destination="@id/navigation_map" />
+
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.sam.scenique_app.ui.home.HomeFragment"
@@ -12,14 +15,17 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.sam.scenique_app.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_map"
+        android:name="com.sam.scenique_app.ui.maps.ReviewMapFragment"
+        android:label="Map"
+        tools:layout="@layout/fragment_review_map" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.sam.scenique_app.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_camera"
+        android:name="com.sam.scenique_app.ui.camera.CameraFragment"
+        android:label="Camera"
+        tools:layout="@layout/fragment_camera" />
+
+
+
 </navigation>

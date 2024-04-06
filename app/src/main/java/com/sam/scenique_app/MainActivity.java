@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -35,6 +37,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.sam.scenique_app.databinding.ActivityMainBinding;
@@ -60,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView userEmailLabel;
 
     private FirebaseStorage storage;
+    private FirebaseFirestore firestore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
+                R.id.navigation_home, R.id.navigation_map)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -89,8 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
         oneTapClient = Identity.getSignInClient(this);
         storage = FirebaseStorage.getInstance("gs://sample-app-61683.appspot.com");
-
-        upload();
+        firestore = FirebaseFirestore.getInstance();
     }
 
     private void upload() {
@@ -107,15 +110,38 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint("SetTextI18n")
+    @Override
     protected void onResume() {
         super.onResume();
-
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
         userEmailLabel = findViewById(R.id.text_home);
 
-        if (user != null) {
+        if (user != null && userEmailLabel != null) {
             userEmailLabel.setText("Welcome " + user.getDisplayName());
+            showLoggedTabs(true);
+        } else {
+            // Hide the map tab if the user is not logged in
+            showLoggedTabs(false);
+        }
+    }
+
+//    private void navigateToMapFragment() {
+//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+//        navController.navigate(R.id.navigation_map);
+//        binding.navView.setSelectedItemId(R.id.navigation_map);
+//    }
+
+    public void showLoggedTabs(boolean show) {
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        Menu menu = navView.getMenu();
+
+        MenuItem mapItem = menu.findItem(R.id.navigation_map);
+        MenuItem cameraItem = menu.findItem(R.id.navigation_camera);
+        if (mapItem != null && cameraItem != null) {
+            System.out.println("Map Item found, Set visible");
+            mapItem.setVisible(show);
+            cameraItem.setVisible(show);
         }
     }
 
@@ -162,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
 //                                            updateUI(user);
                                             if(user != null) {
                                                 userEmailLabel.setText("Welcome " + user.getEmail());
+                                                showLoggedTabs(true);
                                             }
                                         } else {
                                             System.out.println("Fail");
@@ -170,6 +197,8 @@ public class MainActivity extends AppCompatActivity {
                                 });
 
                         System.out.println("Logged in " + credential.getGoogleIdToken());
+//                        Intent i = new Intent(MainActivity.this, Review.class);
+//                        startActivity(i);
                     }
                 } catch (ApiException e) {
                     System.out.println("ERROR");
