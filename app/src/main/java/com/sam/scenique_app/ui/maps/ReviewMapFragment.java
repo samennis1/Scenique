@@ -70,14 +70,13 @@ public class ReviewMapFragment extends Fragment implements OnMapReadyCallback {
 
                             LocationReview review = new LocationReview(latitude, longitude, rating, reviewText, photoUrl);
                             LatLng position = new LatLng(review.getLatitude(), review.getLongitude());
-                            builder.include(position); // Include this position in the bounds
+                            builder.include(position);
                             Marker marker = mMap.addMarker(new MarkerOptions().position(position));
-                            marker.setTag(review); // Store the review object for later retrieval
+                            marker.setTag(review);
                         }
 
-                        // After adding all markers, adjust the camera to show them all
                         LatLngBounds bounds = builder.build();
-                        // Consider an appropriate padding value in pixels (e.g., 100), depending on the screen size or markers' proximity
+
                         int padding = 100;
                         mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
                     } else {
@@ -93,7 +92,6 @@ public class ReviewMapFragment extends Fragment implements OnMapReadyCallback {
             return true;
         });
     }
-
 
     private void showReviewOverlay(float rating, String reviewText) {
         Context context = getContext();
