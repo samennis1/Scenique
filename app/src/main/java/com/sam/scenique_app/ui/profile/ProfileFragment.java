@@ -10,6 +10,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
+import com.sam.scenique_app.R;
+
+public class ProfileFragment extends Fragment {
+
+    private ProfileViewModel mViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.sam.scenique_app.R;
