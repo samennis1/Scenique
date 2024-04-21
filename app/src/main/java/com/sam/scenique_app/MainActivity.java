@@ -70,11 +70,9 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
 
         signInRequest = BeginSignInRequest.builder()
-                .setPasswordRequestOptions(BeginSignInRequest.PasswordRequestOptions.builder()
-                        .setSupported(true)
-                        .build())
                 .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                         .setSupported(true)
+                        .setFilterByAuthorizedAccounts(false)
                         .setServerClientId(getString(R.string.default_web_client_id))
                         .build())
                 .setAutoSelectEnabled(true)
