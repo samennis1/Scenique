@@ -14,8 +14,11 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -50,6 +53,7 @@ public class CameraFragment extends Fragment {
     private Uri photoUri;
     private FusedLocationProviderClient fusedLocationClient;
     private String photoURL;
+    private boolean photoStored = false;
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
@@ -153,6 +157,10 @@ public class CameraFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             System.out.println("Photo Taken!");
+            Button camText = getActivity().findViewById(R.id.open_camera_button);
+            camText.setText("Photo Attached");
+            camText.setEnabled(false);
+
 
             if (photoUri != null) {
 
@@ -160,6 +168,8 @@ public class CameraFragment extends Fragment {
                     InputStream stream = getActivity().getContentResolver().openInputStream(photoUri);
                     if (stream != null) {
 
+                        ImageView imageUpload = getActivity().findViewById(R.id.imageView);
+                        imageUpload.setImageURI(photoUri);
                         uploadPhotoToFirebase(stream);
                     } else {
                         Toast.makeText(getContext(), "Failed to open photo file.", Toast.LENGTH_SHORT).show();
