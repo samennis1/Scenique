@@ -5,12 +5,20 @@ import androidx.fragment.app.Fragment;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -87,19 +95,43 @@ public class ReviewMapFragment extends Fragment implements OnMapReadyCallback {
         mMap.setOnMarkerClickListener(marker -> {
             LocationReview review = (LocationReview) marker.getTag();
             if (review != null) {
-                showReviewOverlay(review.getRating(), review.getReviewText());
+                showReviewOverlay(review);
             }
             return true;
         });
     }
 
-    private void showReviewOverlay(float rating, String reviewText) {
+    private void showReviewOverlay(LocationReview review) {
         Context context = getContext();
+
+        ImageView image = new ImageView(getContext());
+        String imageUrl = review.getPhotoUrl();
+
+        System.out.println(imageUrl);
+
+        Glide.with(getContext())
+                .load(imageUrl)
+                .listener(new RequestListener<Drawable>() {
+                    @Override
+                    public boolean onLoadFailed(@androidx.annotation.Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                        Log.e("ImageView", "Error loading image", e);
+                        System.out.println("Image fail");
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                        Log.i("ImageView", "Image loaded successfully");
+                        System.out.println("Image loaded");
+                        return false;
+                    }
+                })
+                .into(image);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Review");
 
-        String message = "Rating: " + rating + "/5 stars\n\nReview:\n" + reviewText;
+        String message = "Rating: " + review.getRating() + "/5 stars\n\nReview:\n" + review.getReviewText();
         builder.setMessage(message);
 
         builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
@@ -108,6 +140,16 @@ public class ReviewMapFragment extends Fragment implements OnMapReadyCallback {
                 dialog.dismiss();
             }
         });
+
+        LinearLayout layout = new LinearLayout(context);
+        layout.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        ));
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.addView(image);
+
+        builder.setView(layout);
 
         AlertDialog dialog = builder.create();
         dialog.show();
