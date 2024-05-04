@@ -8,4 +8,6 @@
     <string name="title_activity_review_map">ReviewMap</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="Settings">Settings</string>
+    <string name="edit_profile">Edit Profile</string>
 </resources>
