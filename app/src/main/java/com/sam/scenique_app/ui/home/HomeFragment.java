@@ -49,10 +49,12 @@ public class HomeFragment extends Fragment {
 
         MenuItem mapItem = menu.findItem(R.id.navigation_map);
         MenuItem cameraItem = menu.findItem(R.id.navigation_camera);
+        MenuItem settingsItem = menu.findItem(R.id.navigation_settings);
         if (mapItem != null && cameraItem != null) {
             System.out.println("Map Item found, Set visible");
             mapItem.setVisible(show);
             cameraItem.setVisible(show);
+            settingsItem.setVisible(show);
         }
     }
 

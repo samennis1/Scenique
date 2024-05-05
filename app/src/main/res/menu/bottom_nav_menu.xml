@@ -16,4 +16,11 @@
         android:icon="@drawable/ic_notifications_black_24dp"
         android:title="Camera" />
 
+    <item
+        android:id="@+id/navigation_settings"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="Settings" />
+
+
+
 </menu>

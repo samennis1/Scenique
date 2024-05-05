@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    tools:context=".SettingsPage">
+    tools:context=".SettingsActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -45,14 +45,14 @@
                 android:layout_height="100dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="100dp"
-                android:src="@drawable/ProfileImagePH"
+                android:src="@drawable/profile_image_ph"
                 />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="@string/ProfileName"
+                android:text="ProfileName"
                 android:layout_gravity="center"
                 android:textColor="@color/dark_gray"
                 android:textSize="22dp"
@@ -73,8 +73,10 @@
                />
             
             <LinearLayout
+
                 android:background="@drawable/round_back_white10_20"
                 android:layout_width="match_parent"
+
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
@@ -262,7 +264,7 @@
 
                 <ImageView
                     android:layout_width="40dp"
-                    android:id="@+id/SecurityIcon"
+                    android:id="@+id/TextSizeIcon"
                     android:layout_height="40dp"
                     android:padding="12dp"
                     android:src="@drawable/text_size_icon"
@@ -277,7 +279,7 @@
                     android:textColor="@color/dark_gray"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:layout_toEndOf="@+id/SecurityIcon"/>
+                    android:layout_toEndOf="@+id/TextSizeIcon"/>
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -311,7 +313,7 @@
 
                 <ImageView
                     android:layout_width="40dp"
-                    android:id="@+id/SecurityIcon"
+                    android:id="@+id/AboutUsIcon"
                     android:layout_height="40dp"
                     android:padding="12dp"
                     android:src="@drawable/about_us_icon"
@@ -326,7 +328,7 @@
                     android:textColor="@color/dark_gray"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:layout_toEndOf="@+id/SecurityIcon"/>
+                    android:layout_toEndOf="@+id/AboutUsIcon"/>
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -360,7 +362,7 @@
 
                 <ImageView
                     android:layout_width="40dp"
-                    android:id="@+id/SecurityIcon"
+                    android:id="@+id/LogOutIcon"
                     android:layout_height="40dp"
                     android:padding="12dp"
                     android:src="@drawable/logout_icon"
@@ -375,7 +377,7 @@
                     android:textColor="@color/dark_gray"
                     android:textSize="16sp"
                     android:textStyle="bold"
-                    android:layout_toEndOf="@+id/SecurityIcon"/>
+                    android:layout_toEndOf="@+id/LogOutIcon"/>
 
                 <ImageView
                     android:layout_width="wrap_content"

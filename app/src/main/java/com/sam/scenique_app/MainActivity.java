@@ -54,14 +54,19 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseStorage storage;
     private FirebaseFirestore firestore;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
+        //navView.setOnNavigationItemSelectedListener(this);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_map)
                 .build();
@@ -82,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
         storage = FirebaseStorage.getInstance("gs://sample-app-61683.appspot.com");
         firestore = FirebaseFirestore.getInstance();
     }
+
+
 
     private void upload() {
         StorageReference ref = storage.getReference();
@@ -121,7 +128,8 @@ public class MainActivity extends AppCompatActivity {
 
         MenuItem mapItem = menu.findItem(R.id.navigation_map);
         MenuItem cameraItem = menu.findItem(R.id.navigation_camera);
-        if (mapItem != null && cameraItem != null) {
+        MenuItem settingsItem = menu.findItem(R.id.navigation_settings);
+        if (mapItem != null && cameraItem != null && settingsItem != null) {
             System.out.println("Map Item found, Set visible");
             mapItem.setVisible(show);
             cameraItem.setVisible(show);
