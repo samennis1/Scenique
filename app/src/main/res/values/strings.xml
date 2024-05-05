@@ -1,11 +1,12 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="default_web_client_id">266096908530-273ftu153o2i1b4hrmcdd9djb6ik29k6.apps.googleusercontent.com</string>
-    <string name="app_name">Scenique</string>
+<resources>
+    <string name="app_name">Scenique_App</string>
     <string name="title_home">Home</string>
-    <string name="welcome_to_scenique">Welcome to Scenique</string>
-    <string name="login_with_google">Login with Google</string>
-    <string name="log_out">Log out</string>
-    <string name="welcome_image_description">Scenic View</string>
-    <string name="review_image_description">Review Image</string>
-    <string name="recent_reviews">Recent Reviews</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="default_web_client_id">266096908530-273ftu153o2i1b4hrmcdd9djb6ik29k6.apps.googleusercontent.com</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_review_map">ReviewMap</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="name">Name</string>
 </resources>
