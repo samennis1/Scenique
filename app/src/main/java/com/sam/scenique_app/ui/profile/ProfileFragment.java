@@ -12,29 +12,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.sam.scenique_app.R;
-
-public class ProfileFragment extends Fragment {
-
-    private ProfileViewModel mViewModel;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.sam.scenique_app.R;
 import com.sam.scenique_app.ReadWriteUser;
-import com.sam.scenique_app.databinding.FragmentProfileBinding;
 
 public class ProfileFragment extends Fragment {
 
-    private ImageView profilePhoto;
     private ProfileViewModel mViewModel;
-    private TextView profileEmail;
-
-    private FragmentProfileBinding binding;
-
-    private TextView profileDescription;
-    private String email, name;
-    private FirebaseAuth authProfile;
-    private float reviewCount;
 
     public static ProfileFragment newInstance() {
         return new ProfileFragment();
