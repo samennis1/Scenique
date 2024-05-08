@@ -9,21 +9,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.sam.scenique_app.R;
+import com.sam.scenique_app.Review;
+import com.sam.scenique_app.ReviewAdapter;
 import com.sam.scenique_app.databinding.FragmentHomeBinding;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
+    private FirebaseFirestore db;
+
     FirebaseAuth mAuth;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -41,6 +53,22 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 logoutUser();
+            }
+        });
+
+        RecyclerView reviewsCarousel = binding.reviewsCarousel;
+        reviewsCarousel.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        final ReviewAdapter reviewAdapter = new ReviewAdapter();
+        reviewsCarousel.setAdapter(reviewAdapter);
+
+        db = FirebaseFirestore.getInstance();
+        db.collection("reviews").limit(10).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                List<Review> reviews = new ArrayList<>();
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    reviews.add(document.toObject(Review.class));
+                }
+                reviewAdapter.setReviews(reviews);
             }
         });
 
@@ -63,11 +91,11 @@ public class HomeFragment extends Fragment {
         Button signinButton = getView().findViewById(R.id.signinBtn);
 
         if (user != null && logoutButton != null && signinButton != null) {
-            logoutButton.setBackgroundColor(getResources().getColor(R.color.button_color));
-            signinButton.setBackgroundColor(Color.GRAY);
+            logoutButton.setVisibility(View.VISIBLE);
+            signinButton.setVisibility(View.GONE);
         } else if(logoutButton != null && signinButton != null) {
-            logoutButton.setBackgroundColor(Color.GRAY);
-            signinButton.setBackgroundColor(getResources().getColor(R.color.button_color));
+            logoutButton.setVisibility(View.GONE);
+            signinButton.setVisibility(View.VISIBLE);
         }
     }
 
@@ -91,8 +119,8 @@ public class HomeFragment extends Fragment {
         Button logoutButton = getView().findViewById(R.id.logoutBtn);
         Button signinButton = getView().findViewById(R.id.signinBtn);
         TextView userText = getView().findViewById(R.id.text_home);
-        logoutButton.setBackgroundColor(Color.GRAY);
-        signinButton.setBackgroundColor(getResources().getColor(R.color.button_color));
+        logoutButton.setVisibility(View.GONE);
+        signinButton.setVisibility(View.VISIBLE);
         userText.setText("Welcome to Scenique");
     }
 

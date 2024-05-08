@@ -161,6 +161,7 @@ public class CameraFragment extends Fragment {
             Button camText = getActivity().findViewById(R.id.open_camera_button);
             camText.setText("Photo Taken");
             camText.setBackgroundColor(Color.GRAY);
+            camText.setVisibility(View.GONE);
             camText.setEnabled(false);
 
 

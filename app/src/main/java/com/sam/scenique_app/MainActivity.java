@@ -169,8 +169,8 @@ public class MainActivity extends AppCompatActivity {
                                                 userEmailLabel.setText("Welcome " + user.getDisplayName());
                                                 Button logoutButton = findViewById(R.id.logoutBtn);
                                                 Button signinButton = findViewById(R.id.signinBtn);
-                                                logoutButton.setBackgroundColor(getResources().getColor(R.color.button_color));
-                                                signinButton.setBackgroundColor(Color.GRAY);
+                                                logoutButton.setVisibility(View.VISIBLE);
+                                                signinButton.setVisibility(View.INVISIBLE);
                                                 showLoggedTabs(true);
                                             }
                                         } else {
