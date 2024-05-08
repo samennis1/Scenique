@@ -72,7 +72,11 @@ public class HomeFragment extends Fragment {
             if (task.isSuccessful()) {
                 List<Review> reviews = new ArrayList<>();
                 for (QueryDocumentSnapshot document : task.getResult()) {
-                    reviews.add(document.toObject(Review.class));
+                    String photoUrl = document.getString("photoUrl");
+                    Double rating = document.getDouble("rating");
+                    String review = document.getString("review");
+
+                    reviews.add(new Review(photoUrl, review, rating));
                 }
                 reviewAdapter.setReviews(reviews);
             }

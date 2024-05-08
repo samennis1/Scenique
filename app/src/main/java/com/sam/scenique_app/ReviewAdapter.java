@@ -54,8 +54,12 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
             Glide.with(itemView.getContext())
                     .load(review.getPhotoUrl())
                     .into(photoImageView);
-            reviewTextView.setText(review.getReviewText());
-            ratingBar.setRating(review.getRating());
+
+            String reviewText = String.valueOf(new StringBuilder()
+                    .append(review.getReviewText().substring(0, Math.min(review.getReviewText().length(), 30)))
+                    .append("..."));
+            reviewTextView.setText(reviewText);
+            ratingBar.setRating((float) review.getRating());
         }
     }
 }

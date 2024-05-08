@@ -7,12 +7,12 @@ import android.os.Bundle;
 public class Review {
     private String photoUrl;
     private String reviewText;
-    private float rating;
+    private double rating;
 
     public Review() {
     }
 
-    public Review(String photoUrl, String reviewText, float rating) {
+    public Review(String photoUrl, String reviewText, double rating) {
         this.photoUrl = photoUrl;
         this.reviewText = reviewText;
         this.rating = rating;
@@ -34,7 +34,7 @@ public class Review {
         this.reviewText = reviewText;
     }
 
-    public float getRating() {
+    public double getRating() {
         return rating;
     }
 
