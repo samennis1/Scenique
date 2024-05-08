@@ -1,11 +1,13 @@
 package com.sam.scenique_app.ui.home;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,12 +17,14 @@ import androidx.navigation.Navigation;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.sam.scenique_app.R;
 import com.sam.scenique_app.databinding.FragmentHomeBinding;
 
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
+    FirebaseAuth mAuth;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -43,6 +47,30 @@ public class HomeFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        TextView userEmailLabel = getView().findViewById(R.id.text_home);
+
+        if (userEmailLabel != null && user != null) {
+            userEmailLabel.setText("Welcome " + user.getDisplayName());
+        }
+
+        Button logoutButton = getView().findViewById(R.id.logoutBtn);
+        Button signinButton = getView().findViewById(R.id.signinBtn);
+
+        if (user != null && logoutButton != null && signinButton != null) {
+            logoutButton.setBackgroundColor(getResources().getColor(R.color.button_color));
+            signinButton.setBackgroundColor(Color.GRAY);
+        } else if(logoutButton != null && signinButton != null) {
+            logoutButton.setBackgroundColor(Color.GRAY);
+            signinButton.setBackgroundColor(getResources().getColor(R.color.button_color));
+        }
+    }
+
     public void showLoggedTabs(boolean show) {
         BottomNavigationView navView = getActivity().findViewById(R.id.nav_view);
         Menu menu = navView.getMenu();
@@ -60,6 +88,12 @@ public class HomeFragment extends Fragment {
         FirebaseAuth.getInstance().signOut();
         showLoggedTabs(false);
 
+        Button logoutButton = getView().findViewById(R.id.logoutBtn);
+        Button signinButton = getView().findViewById(R.id.signinBtn);
+        TextView userText = getView().findViewById(R.id.text_home);
+        logoutButton.setBackgroundColor(Color.GRAY);
+        signinButton.setBackgroundColor(getResources().getColor(R.color.button_color));
+        userText.setText("Welcome to Scenique");
     }
 
     @Override

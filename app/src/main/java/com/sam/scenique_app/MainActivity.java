@@ -3,10 +3,12 @@ package com.sam.scenique_app;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -81,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         oneTapClient = Identity.getSignInClient(this);
         storage = FirebaseStorage.getInstance("gs://sample-app-61683.appspot.com");
         firestore = FirebaseFirestore.getInstance();
+
+        userEmailLabel = findViewById(R.id.text_home);
     }
 
     private void upload() {
@@ -102,17 +106,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser user = mAuth.getCurrentUser();
-        userEmailLabel = findViewById(R.id.text_home);
 
-        if (userEmailLabel != null && user != null) {
-            userEmailLabel.setText("Welcome " + user.getDisplayName());
-        }
-
-        if (user != null) {
-            showLoggedTabs(true);
-        } else {
-            showLoggedTabs(false);
-        }
+        showLoggedTabs(user != null);
     }
 
     public void showLoggedTabs(boolean show) {
@@ -161,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
                         AuthCredential firebaseCredential = GoogleAuthProvider.getCredential(idToken, null);
                         mAuth.signInWithCredential(firebaseCredential)
                                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                                    @SuppressLint("SetTextI18n")
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
@@ -169,8 +165,12 @@ public class MainActivity extends AppCompatActivity {
 
                                             FirebaseUser user = mAuth.getCurrentUser();
 
-                                            if (user != null) {
-                                                userEmailLabel.setText("Welcome " + user.getEmail());
+                                            if (user != null && userEmailLabel != null) {
+                                                userEmailLabel.setText("Welcome " + user.getDisplayName());
+                                                Button logoutButton = findViewById(R.id.logoutBtn);
+                                                Button signinButton = findViewById(R.id.signinBtn);
+                                                logoutButton.setBackgroundColor(getResources().getColor(R.color.button_color));
+                                                signinButton.setBackgroundColor(Color.GRAY);
                                                 showLoggedTabs(true);
                                             }
                                         } else {

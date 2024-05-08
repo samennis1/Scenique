@@ -34,7 +34,7 @@
         android:id="@+id/photo_rating_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="268dp"
+        android:layout_marginTop="324dp"
         android:numStars="5"
         android:rating="0"
         android:stepSize="1.0"
@@ -75,6 +75,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/open_camera_button"
         app:layout_constraintVertical_bias="0.632" />
+
+    <TextView
+        android:id="@+id/attachView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="28dp"
+        android:text="Step 1. Attach a photo"
+        app:layout_constraintBottom_toTopOf="@+id/open_camera_button"
+        tools:layout_editor_absoluteX="16dp" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="21dp"
+        android:text="Step 2. Complete your review"
+        app:layout_constraintBottom_toTopOf="@+id/imageView"
+        tools:layout_editor_absoluteX="16dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
