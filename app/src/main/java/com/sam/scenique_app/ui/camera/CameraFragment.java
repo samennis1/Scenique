@@ -54,8 +54,6 @@ public class CameraFragment extends Fragment {
     private Uri photoUri;
     private FusedLocationProviderClient fusedLocationClient;
     private String photoURL;
-    private boolean photoStored = false;
-    private boolean starPicked = false;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private static final String[] PERMISSIONS_REQUIRED = new String[]{
