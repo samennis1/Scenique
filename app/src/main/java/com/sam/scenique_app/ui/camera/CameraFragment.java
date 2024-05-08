@@ -5,6 +5,7 @@ import static android.app.Activity.RESULT_OK;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -54,7 +55,7 @@ public class CameraFragment extends Fragment {
     private FusedLocationProviderClient fusedLocationClient;
     private String photoURL;
     private boolean photoStored = false;
-
+    private boolean starPicked = false;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private static final String[] PERMISSIONS_REQUIRED = new String[]{
@@ -158,7 +159,8 @@ public class CameraFragment extends Fragment {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             System.out.println("Photo Taken!");
             Button camText = getActivity().findViewById(R.id.open_camera_button);
-            camText.setText("Photo Attached");
+            camText.setText("Photo Taken");
+            camText.setBackgroundColor(Color.GRAY);
             camText.setEnabled(false);
 
 
@@ -211,21 +213,37 @@ public class CameraFragment extends Fragment {
     private void submitReview(double latitude, double longitude, String photoUrl) {
         RatingBar ratingBar = getView().findViewById(R.id.photo_rating_bar);
         EditText reviewText = getView().findViewById(R.id.photo_review_text);
+        Button camText = getActivity().findViewById(R.id.open_camera_button);
+        ImageView imageUpload = getActivity().findViewById(R.id.imageView);
         float rating = ratingBar.getRating();
         String review = reviewText.getText().toString();
 
-        Map<String, Object> reviewMap = new HashMap<>();
-        reviewMap.put("rating", rating);
-        reviewMap.put("review", review);
-        reviewMap.put("photoUrl", photoUrl);
-        reviewMap.put("latitude", latitude);
-        reviewMap.put("longitude", longitude);
+        if (rating <= 0 || review.trim().isEmpty() || photoUrl == null || photoUrl.trim().isEmpty()) {
+            Toast.makeText(getContext(), "Invalid input. Please ensure all fields are correctly filled.", Toast.LENGTH_LONG).show();
+        } else {
+            System.out.println("Posting");
+            Map<String, Object> reviewMap = new HashMap<>();
+            reviewMap.put("rating", rating);
+            reviewMap.put("review", review);
+            reviewMap.put("photoUrl", photoUrl);
+            reviewMap.put("latitude", latitude);
+            reviewMap.put("longitude", longitude);
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("reviews")
-                .add(reviewMap)
-                .addOnSuccessListener(documentReference -> Toast.makeText(getContext(), "Review submitted successfully.", Toast.LENGTH_SHORT).show())
-                .addOnFailureListener(e -> Toast.makeText(getContext(), "Error submitting review.", Toast.LENGTH_SHORT).show());
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("reviews")
+                    .add(reviewMap)
+                    .addOnSuccessListener(documentReference -> Toast.makeText(getContext(), "Review submitted successfully.", Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(e -> Toast.makeText(getContext(), "Error submitting review.", Toast.LENGTH_SHORT).show());
+
+            ratingBar.setRating(0);
+            reviewText.setText("");
+            imageUpload.setImageURI(null);
+
+            camText.setText("Take a photo");
+            camText.setBackgroundColor(getResources().getColor(R.color.button_color));
+            camText.setEnabled(true);
+
+        }
     }
 
     @Override
