@@ -56,6 +56,12 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        getData();
+
+        return root;
+    }
+
+    public void getData() {
         RecyclerView reviewsCarousel = binding.reviewsCarousel;
         reviewsCarousel.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         final ReviewAdapter reviewAdapter = new ReviewAdapter();
@@ -71,8 +77,6 @@ public class HomeFragment extends Fragment {
                 reviewAdapter.setReviews(reviews);
             }
         });
-
-        return root;
     }
 
     @Override
