@@ -14,8 +14,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -48,6 +46,8 @@ import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
+    private int fragmentId;
+    public static ProfileFragment profileFragment;
     private ActivityMainBinding binding;
 
     private SignInClient oneTapClient;
@@ -140,12 +140,7 @@ public class MainActivity extends AppCompatActivity {
                                     null, 0, 0, 0);
                         } catch (IntentSender.SendIntentException e) {
                             System.out.println(e.getLocalizedMessage());
-//                            //  Open user profile on sign-in
-//                            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
-//                            //Prevents user going back to sign-in screen
-//                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK)   ;
-//                                startActivity(intent);
-//                                finish();
+
                         }
                     }
                 })
