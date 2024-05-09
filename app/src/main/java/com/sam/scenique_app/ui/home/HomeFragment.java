@@ -1,6 +1,5 @@
 package com.sam.scenique_app.ui.home;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -9,12 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,8 +20,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.sam.scenique_app.LocationReview;
 import com.sam.scenique_app.R;
-import com.sam.scenique_app.Review;
 import com.sam.scenique_app.ReviewAdapter;
 import com.sam.scenique_app.databinding.FragmentHomeBinding;
 
@@ -70,13 +67,15 @@ public class HomeFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         db.collection("reviews").limit(10).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                List<Review> reviews = new ArrayList<>();
+                List<LocationReview> reviews = new ArrayList<>();
                 for (QueryDocumentSnapshot document : task.getResult()) {
+                    double longitude = document.getDouble("longitude");
+                    double latitude = document.getDouble("latitude");
                     String photoUrl = document.getString("photoUrl");
-                    Double rating = document.getDouble("rating");
+                    double rating = document.getDouble("rating");
                     String review = document.getString("review");
 
-                    reviews.add(new Review(photoUrl, review, rating));
+                    reviews.add(new LocationReview(longitude, latitude, (float) rating, review, photoUrl));
                 }
                 reviewAdapter.setReviews(reviews);
             }

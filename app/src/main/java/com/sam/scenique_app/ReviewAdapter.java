@@ -13,9 +13,9 @@ import java.util.List;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
 
-    private List<Review> reviews;
+    private List<LocationReview> reviews;
 
-    public void setReviews(List<Review> reviews) {
+    public void setReviews(List<LocationReview> reviews) {
         this.reviews = reviews;
         notifyDataSetChanged();
     }
@@ -29,7 +29,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 
     @Override
     public void onBindViewHolder(@NonNull ReviewViewHolder holder, int position) {
-        Review review = reviews.get(position);
+        LocationReview review = reviews.get(position);
         holder.bind(review);
     }
 
@@ -50,7 +50,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
             ratingBar = itemView.findViewById(R.id.review_rating);
         }
 
-        void bind(Review review) {
+        void bind(LocationReview review) {
             Glide.with(itemView.getContext())
                     .load(review.getPhotoUrl())
                     .into(photoImageView);
