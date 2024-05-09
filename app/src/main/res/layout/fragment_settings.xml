@@ -9,6 +9,8 @@
     android:orientation="vertical"
     tools:context=".SettingsActivity">
 
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -45,7 +47,7 @@
 
 
             <LinearLayout
-
+                android:id="@+id/MyReviewsView"
                 android:background="@drawable/round_back_white10_20"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -53,6 +55,8 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginTop="40dp"
                 android:layout_marginBottom="20dp"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="vertical"
                 android:padding="15dp">
 
@@ -92,7 +96,7 @@
             </LinearLayout>
 
             <LinearLayout
-
+                android:id="@+id/FAQsView"
                 android:background="@drawable/round_back_white10_20"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -100,6 +104,8 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="vertical"
                 android:padding="15dp">
 
@@ -140,12 +146,15 @@
 
             <!-- About Us-->
             <LinearLayout
+                android:id="@+id/AboutUsView"
                 android:background="@drawable/round_back_white10_20"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginTop="20dp"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="vertical"
                 android:padding="15dp">
 
@@ -189,6 +198,7 @@
 
             <!-- Log Out-->
             <LinearLayout
+                android:id="@+id/LogOutView"
                 android:background="@drawable/round_back_white10_20"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -196,6 +206,8 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginTop="40dp"
                 android:layout_marginBottom="75dp"
+                android:clickable="true"
+                android:focusable="true"
                 android:orientation="vertical"
                 android:padding="15dp">
 

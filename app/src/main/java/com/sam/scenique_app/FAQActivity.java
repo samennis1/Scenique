@@ -8,6 +8,8 @@ import android.widget.Toolbar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.sam.scenique_app.R;
+import com.sam.scenique_app.ui.settings.SettingsFragment;
+
 public class FAQActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +20,7 @@ public class FAQActivity extends AppCompatActivity {
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish(); // Close the activity
+                finish();
             }
         });
     }

@@ -53,38 +53,6 @@ public class SettingsActivity extends AppCompatActivity implements OnClickListen
             }*/
 
 
-
-
-
-        aboutUsLayout.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SettingsActivity.this, AboutUsActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        nightModeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-            }
-        });
-
-        privateAccountSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-            }
-        });
-
-        notificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-            }
-        });
-
-
-
-
     }
 
    /* public void onResume() {

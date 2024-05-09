@@ -7,16 +7,18 @@
     android:padding="16dp">
 
 
+
+
     <TextView
         android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:textStyle="bold"
-        android:text="Back"
-        android:padding="10dp"
         android:clickable="true"
-        android:focusable="true"/>
+        android:focusable="true"
+        android:padding="10dp"
+        android:text="Back"
+        android:textStyle="bold" />
 
     <ScrollView
         android:layout_width="match_parent"
