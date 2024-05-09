@@ -12,8 +12,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -39,13 +37,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.sam.scenique_app.databinding.ActivityMainBinding;
-import com.sam.scenique_app.ui.home.HomeFragment;
 import com.sam.scenique_app.ui.profile.ProfileFragment;
 
 import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
+    private int fragmentId;
     public static ProfileFragment profileFragment;
     private ActivityMainBinding binding;
 
@@ -64,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        fragmentId = R.id.nav_host_fragment_activity_main;
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_map)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        NavController navController = Navigation.findNavController(this, fragmentId);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
@@ -116,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
                 userEmailLabel.setText("Welcome " + user.getDisplayName());
                 ReadWriteUser.username = user.getDisplayName();
                 ReadWriteUser.email = user.getEmail();
-
             }
 
         showLoggedTabs(user != null);
@@ -147,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
                                     null, 0, 0, 0);
                         } catch (IntentSender.SendIntentException e) {
                             System.out.println(e.getLocalizedMessage());
-
                         }
                     }
                 })
@@ -174,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
 
+
                                             System.out.println("Success");
 
                                             FirebaseUser user = mAuth.getCurrentUser();
@@ -181,15 +180,6 @@ public class MainActivity extends AppCompatActivity {
                                             if (user != null) {
                                                 userEmailLabel.setText("Welcome " + user.getEmail());
                                                 showLoggedTabs(true);
-                                                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-                                                profileFragment = ProfileFragment.newInstance();
-
-                                                fragmentTransaction.replace(R.id.nav_host_fragment_activity_main, profileFragment);
-                                                fragmentTransaction.addToBackStack(null);
-                                                fragmentTransaction.commit();
-
-                                                getSupportFragmentManager().popBackStack("textHome", FragmentManager.POP_BACK_STACK_INCLUSIVE);
                                             }
                                         } else {
                                             System.out.println("Fail");
