@@ -113,10 +113,12 @@ public class HomeFragment extends Fragment {
         BottomNavigationView navView = getActivity().findViewById(R.id.nav_view);
         Menu menu = navView.getMenu();
 
+        MenuItem profileItem = menu.findItem(R.id.navigation_profile);
         MenuItem mapItem = menu.findItem(R.id.navigation_map);
         MenuItem cameraItem = menu.findItem(R.id.navigation_camera);
         if (mapItem != null && cameraItem != null) {
             System.out.println("Map Item found, Set visible");
+            profileItem.setVisible(show);
             mapItem.setVisible(show);
             cameraItem.setVisible(show);
         }
