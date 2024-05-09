@@ -19,25 +19,29 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="271dp"
                 android:background="#1c0044">
+
                 <ImageView
+                    android:id="@+id/imageView_profile_image"
                     android:layout_width="200dp"
                     android:layout_height="200dp"
-                    android:id="@+id/imageView_profile_image"
                     android:layout_centerInParent="true"
-                    android:hint="@drawable/no_pfp">
+                    android:background="@drawable/no_pfp">
+
                 </ImageView>
+
                 <TextView
+                    android:id="@+id/textView_show_username"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/textView_show_email"
+                    android:layout_height="60dp"
                     android:layout_below="@id/imageView_profile_image"
-                    android:hint="Loading.."
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="5dp"
+                    android:hint="Loading.."
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
                     android:textColor="@color/white">
+
                 </TextView>
             </RelativeLayout>
             <RelativeLayout
@@ -103,30 +107,21 @@
 
                 </TextView>
             </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/edit_profile"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="20dp"
-                android:layout_margin="10dp"
-                android:background="@color/white">
 
-                <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerInParent="true"
-                    android:src="@drawable/edit"
-                    android:contentDescription="TODO">
-
-                </ImageView>
-
-            </RelativeLayout>
+            <TextView
+                android:id="@+id/myReview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:text="My Reviews"
+                />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
+                android:id="@+id/myRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="200dp"
+                android:layout_marginTop="10dp"
                 />
         </LinearLayout>
 

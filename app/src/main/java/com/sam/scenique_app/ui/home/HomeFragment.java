@@ -1,6 +1,6 @@
 package com.sam.scenique_app.ui.home;
 
-import static com.sam.scenique_app.MainActivity.profileFragment;
+
 
 import android.os.Bundle;
 import android.util.Log;

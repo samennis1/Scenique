@@ -13,11 +13,16 @@ import java.util.List;
 
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
 
+    private String uid;
     private List<LocationReview> reviews;
 
     public void setReviews(List<LocationReview> reviews) {
         this.reviews = reviews;
         notifyDataSetChanged();
+    }
+
+    public String getUid(){
+        return uid;
     }
 
     @NonNull
