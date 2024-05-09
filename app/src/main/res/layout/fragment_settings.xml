@@ -38,7 +38,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="DisplayName"
+                android:id="@+id/display_name"
                 android:layout_gravity="center"
                 android:textColor="@color/dark_gray"
                 android:textSize="22dp"
@@ -182,7 +182,8 @@
                         android:textColor="@color/dark_gray"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:layout_toEndOf="@+id/AboutUsIcon"/>
+                        android:layout_toEndOf="@+id/AboutUsIcon"
+                        tools:layout="@layout/fragment_about_us"/>
 
                     <ImageView
                         android:layout_width="wrap_content"

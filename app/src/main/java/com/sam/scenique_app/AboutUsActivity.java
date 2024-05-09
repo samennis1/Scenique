@@ -7,16 +7,16 @@ import androidx.appcompat.widget.Toolbar;
 
 public class AboutUsActivity extends AppCompatActivity {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about_us);
-
-        Toolbar toolbar = findViewById(R.id.about_us_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-    }
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.activity_about_us);
+//
+//        Toolbar toolbar = findViewById(R.id.about_us_toolbar);
+//        setSupportActionBar(toolbar);
+//        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        //getSupportActionBar().setDisplayShowHomeEnabled(true);
+//    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

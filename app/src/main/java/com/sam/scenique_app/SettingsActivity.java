@@ -15,6 +15,8 @@ import androidx.appcompat.widget.SwitchCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import com.google.firebase.auth.FirebaseUser;
+
 
 public class SettingsActivity extends AppCompatActivity implements OnClickListener{
 
@@ -33,6 +35,14 @@ public class SettingsActivity extends AppCompatActivity implements OnClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_settings);
 
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        assert getView() != null;
+        TextView userEmailLabel = getView().findViewById(R.id.display_name);
+
+        if (userEmailLabel != null && user != null) {
+            displayName.setText(user.getDisplayName());
+        }
 
 
 
@@ -55,7 +65,7 @@ public class SettingsActivity extends AppCompatActivity implements OnClickListen
 
     }
 
-   /* public void onResume() {
+    public void onResume() {
         super.onResume();
 
         mAuth = FirebaseAuth.getInstance();
@@ -72,7 +82,7 @@ public class SettingsActivity extends AppCompatActivity implements OnClickListen
 
     private View getView() {
         return null;
-    }*/
+    }
 
     @Override
     public void onClick(View v) {

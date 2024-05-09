@@ -7,10 +7,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.sam.scenique_app.AboutUsActivity;
 import com.sam.scenique_app.FAQActivity;
 import com.sam.scenique_app.MainActivity;
@@ -20,6 +23,8 @@ import com.sam.scenique_app.SettingsActivity;
 public class SettingsFragment extends Fragment {
     private View myReviewsView;
     private View LogoutView;
+    FirebaseAuth mAuth;
+    TextView displayName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,6 +48,21 @@ public class SettingsFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    public void onResume() {
+        super.onResume();
+
+        mAuth = FirebaseAuth.getInstance();
+        FirebaseUser user = mAuth.getCurrentUser();
+        assert getView() != null;
+        TextView userEmailLabel = getView().findViewById(R.id.display_name);
+
+        if (userEmailLabel != null && user != null) {
+            userEmailLabel.setText(user.getDisplayName());
+        }
+
+
     }
 
 
