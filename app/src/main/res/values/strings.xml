@@ -13,4 +13,9 @@
     <string name="description">Description</string>
     <string name="title_profile">Profile</string>
     <string name="review_image">review image</string>
+    <string name="welcome_image_description">Welcome</string>
+    <string name="welcome_to_scenique">Welcome to Scenique</string>
+    <string name="login_with_google">Login with Google\n</string>
+    <string name="log_out">Log Out\n</string>
+    <string name="review_image_description">Image Description\n</string>
 </resources>

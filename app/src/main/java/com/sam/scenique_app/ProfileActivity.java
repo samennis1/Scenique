@@ -38,7 +38,7 @@ public class ProfileActivity extends AppCompatActivity {
         setContentView(R.layout.fragment_profile);
         getSupportActionBar().setTitle("Profile");
 
-        profileEmail = findViewById(R.id.textView_show_email);
+        profileEmail = findViewById(R.id.textView_show_username);
         profileDescription = findViewById(R.id.textView_show_description);
 
         authProfile = FirebaseAuth.getInstance();
@@ -58,7 +58,7 @@ public class ProfileActivity extends AppCompatActivity {
     public View onCreateView(@NonNull String name, @NonNull Context context, @NonNull AttributeSet attrs) {
         View view = super.onCreateView(name, context, attrs);
 
-        profileEmail = view.findViewById(R.id.textView_show_email);
+        profileEmail = view.findViewById(R.id.textView_show_username);
         profileEmail.setText(ReadWriteUser.email);
 
         return view;
