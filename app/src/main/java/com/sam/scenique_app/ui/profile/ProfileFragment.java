@@ -1,5 +1,6 @@
 package com.sam.scenique_app.ui.profile;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,7 +33,7 @@ public class ProfileFragment extends Fragment {
 
     private ImageView profilePhoto;
     private FirebaseFirestore db;
-
+    private ProfileViewModel mViewModel;
     private TextView profileDescription;
     private TextView profileEmail;
 
@@ -43,6 +44,7 @@ public class ProfileFragment extends Fragment {
         return new ProfileFragment();
     }
 
+    @SuppressLint("MissingInflatedId")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
