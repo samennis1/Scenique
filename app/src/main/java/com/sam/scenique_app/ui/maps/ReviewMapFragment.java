@@ -6,18 +6,23 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -118,55 +123,47 @@ public class ReviewMapFragment extends Fragment implements OnMapReadyCallback {
     private void showReviewOverlay(LocationReview review) {
         Context context = getContext();
 
-        ImageView image = new ImageView(getContext());
+        ImageView image = new ImageView(context);
+        image.setAdjustViewBounds(true);
+        image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        int maxHeight = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
+        image.setMaxHeight(maxHeight);
+
         String imageUrl = review.getPhotoUrl();
-
-        System.out.println(imageUrl);
-
-        Glide.with(getContext())
+        Glide.with(context)
                 .load(imageUrl)
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@androidx.annotation.Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        Log.e("ImageView", "Error loading image", e);
-                        System.out.println("Image fail");
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        Log.i("ImageView", "Image loaded successfully");
-                        System.out.println("Image loaded");
-                        return false;
-                    }
-                })
                 .into(image);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Review");
+        RatingBar ratingBar = new RatingBar(context, null, android.R.attr.ratingBarStyle);
+        LinearLayout.LayoutParams ratingParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        ratingBar.setLayoutParams(ratingParams);
+        ratingBar.setNumStars(5);
+        ratingBar.setStepSize(1.0f);
+        ratingBar.setRating(review.getRating());
+        ratingBar.setIsIndicator(true);
 
-        String message = "Rating: " + review.getRating() + "/5 stars\n\nReview:\n" + review.getReviewText();
-        builder.setMessage(message);
-
-        builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        TextView messageView = new TextView(context);
+        messageView.setText(review.getReviewText());
+        messageView.setTextColor(Color.WHITE);
+        messageView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 16);
 
         LinearLayout layout = new LinearLayout(context);
-        layout.setLayoutParams(new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        ));
         layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(10, 10, 10, 10);
         layout.addView(image);
+        layout.addView(ratingBar);
+        layout.addView(messageView);
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.CustomAlertDialog);
+        builder.setTitle("Review");
         builder.setView(layout);
+        builder.setPositiveButton("Close", (dialog, which) -> dialog.dismiss());
 
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+
 
 }
