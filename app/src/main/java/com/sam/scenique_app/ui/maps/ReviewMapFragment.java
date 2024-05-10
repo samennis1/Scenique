@@ -1,13 +1,23 @@
 package com.sam.scenique_app.ui.maps;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -18,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -25,6 +36,12 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofenceStatusCodes;
+import com.google.android.gms.location.GeofencingClient;
+import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -36,6 +53,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.sam.scenique_app.LocationReview;
 import com.sam.scenique_app.R;
 import com.sam.scenique_app.databinding.FragmentReviewMapBinding;
@@ -44,14 +62,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ReviewMapFragment extends Fragment implements OnMapReadyCallback {
-
     private GoogleMap mMap;
     private FragmentReviewMapBinding binding;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    private LocationReview currentReview;
+    private float currentRadius;
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentReviewMapBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
@@ -69,47 +87,16 @@ public class ReviewMapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        try {
-            boolean success = mMap.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(
-                            getContext(), R.raw.map_style));
-
-            if (!success) {
-                Log.e("MapsActivityRaw", "Style parsing failed.");
-            }
-        } catch (Resources.NotFoundException e) {
-            Log.e("MapsActivityRaw", "Can't find style. Error: ", e);
-        }
-
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        setupMapStyle();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("reviews")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            double latitude = document.getDouble("latitude");
-                            double longitude = document.getDouble("longitude");
-                            float rating = document.getDouble("rating").floatValue();
-                            String reviewText = document.getString("review");
-                            String photoUrl = document.getString("photoUrl");
-
-                            LocationReview review = new LocationReview(latitude, longitude, rating, reviewText, photoUrl);
-                            LatLng position = new LatLng(review.getLatitude(), review.getLongitude());
-                            builder.include(position);
-                            Marker marker = mMap.addMarker(new MarkerOptions().position(position));
-                            marker.setTag(review);
-                        }
-
-                        LatLngBounds bounds = builder.build();
-
-                        int padding = 100;
-                        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding));
-                    } else {
-                        Log.d("ReviewMapFragment", "Error getting documents: ", task.getException());
-                    }
-                });
+        db.collection("reviews").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                processDocuments(task.getResult());
+            } else {
+                Log.d("ReviewMapFragment", "Error getting documents: ", task.getException());
+            }
+        });
 
         mMap.setOnMarkerClickListener(marker -> {
             LocationReview review = (LocationReview) marker.getTag();
@@ -118,6 +105,17 @@ public class ReviewMapFragment extends Fragment implements OnMapReadyCallback {
             }
             return true;
         });
+    }
+
+    private void setupMapStyle() {
+        try {
+            boolean success = mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getContext(), R.raw.map_style));
+            if (!success) {
+                Log.e("MapsActivityRaw", "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e("MapsActivityRaw", "Can't find style. Error: ", e);
+        }
     }
 
     private void showReviewOverlay(LocationReview review) {
@@ -164,6 +162,74 @@ public class ReviewMapFragment extends Fragment implements OnMapReadyCallback {
         dialog.show();
     }
 
+    private void processDocuments(QuerySnapshot result) {
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        for (QueryDocumentSnapshot document : result) {
+            LocationReview review = new LocationReview(
+                    document.getDouble("latitude"),
+                    document.getDouble("longitude"),
+                    document.getDouble("rating").floatValue(),
+                    document.getString("review"),
+                    document.getString("photoUrl")
+            );
+            LatLng position = new LatLng(review.getLatitude(), review.getLongitude());
+            builder.include(position);
+            mMap.addMarker(new MarkerOptions().position(position)).setTag(review);
 
+            currentReview = review;
+            currentRadius = 1000;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                addGeofence();
+            }
+        }
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), 100));
+    }
 
+    @SuppressLint("MissingPermission")
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    private void addGeofence() {
+        if (!checkPermissions()) {
+            return;
+        }
+
+        Geofence geofence = new Geofence.Builder()
+                .setRequestId(createGeofenceRequestId(currentReview, currentRadius))
+                .setCircularRegion(currentReview.getLatitude(), currentReview.getLongitude(), currentRadius)
+                .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+                .build();
+
+        GeofencingRequest geofencingRequest = new GeofencingRequest.Builder()
+                .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
+                .addGeofence(geofence)
+                .build();
+
+        GeofencingClient geofencingClient = LocationServices.getGeofencingClient(getContext());
+        geofencingClient.addGeofences(geofencingRequest, getGeofencePendingIntent())
+                .addOnSuccessListener(aVoid -> Log.d("AddGeofence", "Geofences added successfully"))
+                .addOnFailureListener(e -> Log.d("AddGeofence", "Failed to add geofences", e));
+    }
+
+    private boolean checkPermissions() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 7);
+            return false;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q &&
+                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 8);
+            return false;
+        }
+        return true;
+    }
+
+    private String createGeofenceRequestId(LocationReview review, float radius) {
+        return review.getLatitude() + "," + review.getLongitude() + "_" + radius;
+    }
+
+    private PendingIntent getGeofencePendingIntent() {
+        Intent intent = new Intent(getContext(), GeofenceBroadcastReceiver.class);
+        intent.setAction(GeofenceBroadcastReceiver.ACTION_RECEIVE_GEOFENCE);
+        return PendingIntent.getBroadcast(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+    }
 }
