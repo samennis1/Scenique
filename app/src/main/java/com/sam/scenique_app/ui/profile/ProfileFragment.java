@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.lifecycle.ViewModelProvider;
@@ -19,6 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.sam.scenique_app.LocationReview;
+import com.sam.scenique_app.MyReviewAdapter;
 import com.sam.scenique_app.R;
 import com.sam.scenique_app.ReadWriteUser;
 import com.sam.scenique_app.ReviewAdapter;
@@ -47,6 +49,7 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
+        ProfileViewModel profileViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
 
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
@@ -54,7 +57,8 @@ public class ProfileFragment extends Fragment {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textViewShowUsername;
+        final TextView textView = binding.textViewShowUsername;;
+        profileViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 
 
         profileEmail = view.findViewById(R.id.textView_show_username);
@@ -65,7 +69,7 @@ public class ProfileFragment extends Fragment {
 
         getReviews();
 
-        return view;
+        return root;
     }
 
     public void onResume(){
@@ -85,7 +89,7 @@ public class ProfileFragment extends Fragment {
         myReviews.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         FirebaseUser userf = FirebaseAuth.getInstance().getCurrentUser();
         String uid = userf.getUid();
-        final ReviewAdapter reviewAdapter = new ReviewAdapter();
+        final MyReviewAdapter reviewAdapter = new MyReviewAdapter();
         myReviews.setAdapter(reviewAdapter);
         db = FirebaseFirestore.getInstance();
         db.collection("reviews").limit(10).get().addOnCompleteListener(task -> {
@@ -107,6 +111,11 @@ public class ProfileFragment extends Fragment {
                 reviewAdapter.setReviews(reviews);
             }
         });
+    }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
 }

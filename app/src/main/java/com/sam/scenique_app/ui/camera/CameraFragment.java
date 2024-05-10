@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -209,7 +208,7 @@ public class CameraFragment extends Fragment {
     private void submitButtonClick() {
         if (photoURL == null) return;
 
-        requestSingleLocationUpdate((latitude, longitude) -> submitReview(latitude, longitude, photoURL));
+        requestSingleLocationUpdate((latitude, longitude) -> submitReview( latitude, longitude, photoURL));
     }
 
     private void submitReview(double latitude, double longitude, String photoUrl) {
@@ -224,7 +223,6 @@ public class CameraFragment extends Fragment {
         if (user == null|| rating <= 0 || review.trim().isEmpty() || photoUrl == null || photoUrl.trim().isEmpty()) {
             Toast.makeText(getContext(), "Invalid input. Please ensure all fields are correctly filled.", Toast.LENGTH_LONG).show();
         } else {
-            System.out.println("yuperdollah");
             String userID = user.getUid();
             System.out.println("Posting");
             Map<String, Object> reviewMap = new HashMap<>();
