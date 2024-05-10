@@ -226,12 +226,12 @@ public class CameraFragment extends Fragment {
             String userID = user.getUid();
             System.out.println("Posting");
             Map<String, Object> reviewMap = new HashMap<>();
-            reviewMap.put("uid", userID);
             reviewMap.put("rating", rating);
             reviewMap.put("review", review);
             reviewMap.put("photoUrl", photoUrl);
             reviewMap.put("latitude", latitude);
             reviewMap.put("longitude", longitude);
+            reviewMap.put("uid", userID);
 
             System.out.println("Review submitted");
             FirebaseFirestore db = FirebaseFirestore.getInstance();
