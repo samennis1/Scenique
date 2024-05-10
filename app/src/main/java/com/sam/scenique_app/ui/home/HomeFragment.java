@@ -1,5 +1,6 @@
 package com.sam.scenique_app.ui.home;
 
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -37,8 +38,8 @@ public class HomeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
+
+        HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -110,10 +111,12 @@ public class HomeFragment extends Fragment {
         BottomNavigationView navView = getActivity().findViewById(R.id.nav_view);
         Menu menu = navView.getMenu();
 
+        MenuItem profileItem = menu.findItem(R.id.navigation_profile);
         MenuItem mapItem = menu.findItem(R.id.navigation_map);
         MenuItem cameraItem = menu.findItem(R.id.navigation_camera);
         if (mapItem != null && cameraItem != null) {
             System.out.println("Map Item found, Set visible");
+            profileItem.setVisible(show);
             mapItem.setVisible(show);
             cameraItem.setVisible(show);
         }

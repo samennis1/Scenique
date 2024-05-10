@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +14,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
 import com.google.android.gms.auth.api.identity.BeginSignInResult;
@@ -34,16 +39,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.sam.scenique_app.databinding.ActivityMainBinding;
-
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import com.sam.scenique_app.ui.home.HomeFragment;
+import com.sam.scenique_app.ui.profile.ProfileFragment;
 
 import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
+    private int fragmentId;
+    public static ProfileFragment profileFragment;
     private ActivityMainBinding binding;
 
     private SignInClient oneTapClient;
@@ -55,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseStorage storage;
     private FirebaseFirestore firestore;
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,16 +113,19 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser user = mAuth.getCurrentUser();
 
         showLoggedTabs(user != null);
-    }
+        }
+
 
     public void showLoggedTabs(boolean show) {
         BottomNavigationView navView = findViewById(R.id.nav_view);
         Menu menu = navView.getMenu();
 
+        MenuItem profileItem = menu.findItem(R.id.navigation_profile);
         MenuItem mapItem = menu.findItem(R.id.navigation_map);
         MenuItem cameraItem = menu.findItem(R.id.navigation_camera);
         if (mapItem != null && cameraItem != null) {
             System.out.println("Map Item found, Set visible");
+            profileItem.setVisible(show);
             mapItem.setVisible(show);
             cameraItem.setVisible(show);
         }
@@ -134,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
                                     null, 0, 0, 0);
                         } catch (IntentSender.SendIntentException e) {
                             System.out.println(e.getLocalizedMessage());
+
                         }
                     }
                 })
@@ -160,6 +169,7 @@ public class MainActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
+
 
                                             System.out.println("Success");
 

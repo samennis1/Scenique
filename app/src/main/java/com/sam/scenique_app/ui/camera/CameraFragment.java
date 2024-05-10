@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -32,6 +31,8 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -49,7 +50,8 @@ import java.util.Locale;
 import java.util.Map;
 
 public class CameraFragment extends Fragment {
-
+    private FirebaseAuth mAuth;
+    private String userID;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     private Uri photoUri;
     private FusedLocationProviderClient fusedLocationClient;
@@ -206,20 +208,22 @@ public class CameraFragment extends Fragment {
     private void submitButtonClick() {
         if (photoURL == null) return;
 
-        requestSingleLocationUpdate((latitude, longitude) -> submitReview(latitude, longitude, photoURL));
+        requestSingleLocationUpdate((latitude, longitude) -> submitReview( latitude, longitude, photoURL));
     }
 
     private void submitReview(double latitude, double longitude, String photoUrl) {
         RatingBar ratingBar = getView().findViewById(R.id.photo_rating_bar);
         EditText reviewText = getView().findViewById(R.id.photo_review_text);
         Button camText = getActivity().findViewById(R.id.open_camera_button);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         ImageView imageUpload = getActivity().findViewById(R.id.imageView);
         float rating = ratingBar.getRating();
         String review = reviewText.getText().toString();
 
-        if (rating <= 0 || review.trim().isEmpty() || photoUrl == null || photoUrl.trim().isEmpty()) {
+        if (user == null|| rating <= 0 || review.trim().isEmpty() || photoUrl == null || photoUrl.trim().isEmpty()) {
             Toast.makeText(getContext(), "Invalid input. Please ensure all fields are correctly filled.", Toast.LENGTH_LONG).show();
         } else {
+            String userID = user.getUid();
             System.out.println("Posting");
             Map<String, Object> reviewMap = new HashMap<>();
             reviewMap.put("rating", rating);
@@ -227,7 +231,9 @@ public class CameraFragment extends Fragment {
             reviewMap.put("photoUrl", photoUrl);
             reviewMap.put("latitude", latitude);
             reviewMap.put("longitude", longitude);
+            reviewMap.put("uid", userID);
 
+            System.out.println("Review submitted");
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("reviews")
                     .add(reviewMap)

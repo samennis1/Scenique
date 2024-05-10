@@ -16,4 +16,11 @@
         android:icon="@drawable/baseline_add_a_photo_24"
         android:title="Review" />
 
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/baseline_account_circle_24"
+        android:title="Profile" />
+        
+
+
 </menu>
