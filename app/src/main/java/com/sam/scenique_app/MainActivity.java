@@ -170,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
 
+
                                             System.out.println("Success");
 
                                             FirebaseUser user = mAuth.getCurrentUser();

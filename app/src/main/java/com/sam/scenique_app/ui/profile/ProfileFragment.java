@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,7 +22,6 @@ import com.sam.scenique_app.LocationReview;
 import com.sam.scenique_app.MyReviewAdapter;
 import com.sam.scenique_app.R;
 import com.sam.scenique_app.ReadWriteUser;
-import com.sam.scenique_app.ReviewAdapter;
 import com.sam.scenique_app.databinding.FragmentProfileBinding;
 
 import java.util.ArrayList;
@@ -113,9 +111,10 @@ public class ProfileFragment extends Fragment {
         });
     }
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mViewModel = new ViewModelProvider(this).get(ProfileViewModel.class);
+        // TODO: Use the ViewModel
     }
 
 }
